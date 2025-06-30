@@ -265,8 +265,8 @@ async def handle_request(request):
                     }
                 },
                 {
-                    "name": "get_default_domain_policy",
-                    "description": "Get information about the Default Domain Policy GPO",
+                    "name": "get_domain_password_policy",
+                    "description": "Get domain password policy information using Get-ADDefaultDomainPasswordPolicy",
                     "inputSchema": {
                         "type": "object",
                         "properties": {},
@@ -335,7 +335,7 @@ async def handle_request(request):
                 "get_domain_info": "GetDomainInfo",
                 "get_forest_info": "GetForestInfo",
                 "get_trust_info": "GetTrustInfo",
-                "get_default_domain_policy": "GetDefaultDomainPolicy",
+                "get_domain_password_policy": "GetDomainPasswordPolicy",
                 "get_replication_status": "GetReplicationStatus",
                 "get_all_user_attributes": "GetAllUserAttributes",
                 "get_all_computer_attributes": "GetAllComputerAttributes",
@@ -348,7 +348,7 @@ async def handle_request(request):
                 # Operations that don't need arguments
                 no_args_operations = [
                     "test_ad_connection", "get_domain_info", "get_forest_info", 
-                    "get_trust_info", "get_default_domain_policy", "get_replication_status",
+                    "get_trust_info", "get_domain_password_policy", "get_replication_status",
                     "get_all_user_attributes", "get_all_computer_attributes", "get_sites_and_services"
                 ]
                 
@@ -367,8 +367,8 @@ async def handle_request(request):
                             content_text += "\n\n🔗 **Trust Relationships:**"
                         elif tool_name == "get_replication_status":
                             content_text += "\n\n🔄 **Replication Status:**"
-                        elif tool_name == "get_default_domain_policy":
-                            content_text += "\n\n📋 **Default Domain Policy:**"
+                        elif tool_name == "get_domain_password_policy":
+                            content_text += "\n\n🔐 **Domain Password Policy:**"
                         elif tool_name in ["get_all_user_attributes", "get_all_computer_attributes"]:
                             content_text += "\n\n👥 **Object Attributes:**"
                         elif tool_name == "get_sites_and_services":
@@ -448,7 +448,8 @@ async def run_mcp_server():
     print("🎯 Enhanced MCP Server ready with 14 AD management tools!", file=sys.stderr)
     print("   📋 Basic Tools: User management, groups, connections", file=sys.stderr)
     print("   🏢 Advanced Tools: Domain/Forest info, trusts, replication", file=sys.stderr)
-    print("   🔍 Deep Inspection: All attributes, sites & services, policies", file=sys.stderr)
+    print("   🔐 Password Policy: Get domain password policy directly with Get-ADDefaultDomainPasswordPolicy", file=sys.stderr)
+    print("   🔍 Deep Inspection: All attributes, sites & services", file=sys.stderr)
     
     # Handle JSON-RPC requests
     try:
@@ -535,7 +536,16 @@ async def test_functionality():
         print(f"   Domain: {result['data'].get('DNSRoot', 'Unknown')}")
         print(f"   Mode: {result['data'].get('DomainMode', 'Unknown')}")
     
-    print("\n🔄 4. Testing Replication Status...")
+    print("\n🔐 4. Testing Domain Password Policy...")
+    result = await run_powershell_script("GetDomainPasswordPolicy")
+    status = "✅ SUCCESS" if result['success'] else "❌ FAILED"
+    print(f"   Result: {status}")
+    if result['success'] and result.get('data'):
+        print(f"   Min Password Length: {result['data'].get('MinPasswordLength', 'Unknown')}")
+        print(f"   Complexity Enabled: {result['data'].get('ComplexityEnabled', 'Unknown')}")
+        print(f"   Lockout Threshold: {result['data'].get('LockoutThreshold', 'Unknown')}")
+    
+    print("\n🔄 5. Testing Replication Status...")
     result = await run_powershell_script("GetReplicationStatus")
     status = "✅ SUCCESS" if result['success'] else "❌ FAILED"
     print(f"   Result: {status}")
@@ -548,7 +558,7 @@ async def test_functionality():
     tools = [
         "create_ad_user", "modify_ad_user", "add_user_to_group", "remove_user_from_group",
         "get_ad_user_info", "test_ad_connection", "get_domain_info", "get_forest_info",
-        "get_trust_info", "get_default_domain_policy", "get_replication_status",
+        "get_trust_info", "get_domain_password_policy", "get_replication_status",
         "get_all_user_attributes", "get_all_computer_attributes", "get_sites_and_services"
     ]
     for i, tool in enumerate(tools, 1):

@@ -305,39 +305,32 @@ function Get-TrustInfo {
     }
 }
 
-function Get-DefaultDomainPolicy {
+function Get-DomainPasswordPolicy {
     try {
-        if (-not (Get-Module GroupPolicy -ListAvailable)) {
-            Write-JsonResult -Success $false -Message "GroupPolicy module not available. Please install RSAT-GroupPolicy feature."
-            return
-        }
+        $params = @{}
+        if ($Credential) { $params.Credential = $Credential }
         
-        $defaultGPO = Get-GPO -Name "Default Domain Policy"
+        $passwordPolicy = Get-ADDefaultDomainPasswordPolicy @params
         
         $policyInfo = @{
-            DisplayName = $defaultGPO.DisplayName
-            Id = $defaultGPO.Id.ToString()
-            GpoStatus = $defaultGPO.GpoStatus.ToString()
-            CreationTime = $defaultGPO.CreationTime
-            ModificationTime = $defaultGPO.ModificationTime
-            Description = $defaultGPO.Description
-            WmiFilter = $defaultGPO.WmiFilter
-            User = @{
-                Enabled = $defaultGPO.User.Enabled
-                VersionDirectory = $defaultGPO.User.VersionDirectory
-                VersionSysvol = $defaultGPO.User.VersionSysvol
-            }
-            Computer = @{
-                Enabled = $defaultGPO.Computer.Enabled
-                VersionDirectory = $defaultGPO.Computer.VersionDirectory
-                VersionSysvol = $defaultGPO.Computer.VersionSysvol
-            }
+            ComplexityEnabled = $passwordPolicy.ComplexityEnabled
+            DistinguishedName = $passwordPolicy.DistinguishedName
+            LockoutDuration = $passwordPolicy.LockoutDuration.ToString()
+            LockoutObservationWindow = $passwordPolicy.LockoutObservationWindow.ToString()
+            LockoutThreshold = $passwordPolicy.LockoutThreshold
+            MaxPasswordAge = $passwordPolicy.MaxPasswordAge.ToString()
+            MinPasswordAge = $passwordPolicy.MinPasswordAge.ToString()
+            MinPasswordLength = $passwordPolicy.MinPasswordLength
+            PasswordHistoryCount = $passwordPolicy.PasswordHistoryCount
+            ReversibleEncryptionEnabled = $passwordPolicy.ReversibleEncryptionEnabled
+            ObjectClass = $passwordPolicy.ObjectClass
+            ObjectGUID = $passwordPolicy.ObjectGUID.ToString()
         }
         
-        Write-JsonResult -Success $true -Message "Default Domain Policy information retrieved successfully" -Data $policyInfo
+        Write-JsonResult -Success $true -Message "Domain password policy retrieved successfully" -Data $policyInfo
     }
     catch {
-        Write-JsonResult -Success $false -Message "Failed to get default domain policy: $($_.Exception.Message)"
+        Write-JsonResult -Success $false -Message "Failed to get domain password policy: $($_.Exception.Message)"
     }
 }
 
@@ -560,7 +553,7 @@ switch ($Operation) {
     "GetDomainInfo" { Get-DomainInfo }
     "GetForestInfo" { Get-ForestInfo }
     "GetTrustInfo" { Get-TrustInfo }
-    "GetDefaultDomainPolicy" { Get-DefaultDomainPolicy }
+    "GetDomainPasswordPolicy" { Get-DomainPasswordPolicy }
     "GetReplicationStatus" { Get-ReplicationStatus }
     "GetAllUserAttributes" { Get-AllUserAttributes }
     "GetAllComputerAttributes" { Get-AllComputerAttributes }
