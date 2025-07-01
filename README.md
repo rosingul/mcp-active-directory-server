@@ -27,11 +27,11 @@ The system uses a 3-tier architecture:
    - 8 Advanced tools (domain info, forest info, trusts, replication, etc.)
 
 
--**Credential Manager**: Securely retrieves AD service account credentials from Windows Credential Manager
+- **Credential Manager**: Securely retrieves AD service account credentials from Windows Credential Manager
 
--**PowerShell Orchestrator**: Executes the PowerShell script with appropriate parameters
+- **PowerShell Orchestrator**: Executes the PowerShell script with appropriate parameters
 
--**Response Formatter**: Converts PowerShell JSON output into MCP-compliant responses
+- **Response Formatter**: Converts PowerShell JSON output into MCP-compliant responses
 
 **Key Functions**:
 
@@ -43,7 +43,7 @@ async def run_powershell_script()    # Executes PowerShell operations
 async def get_credentials_from_credential_manager()  # Security layer
 ```
 
-**2. `ad_operations.ps1` **- The Active Directory Workhorse ⚙️**
+**2. `ad_operations.ps1` - The Active Directory Workhorse ⚙️**
 
 **Role:** Contains all actual Active Directory operations and business logic
 
@@ -69,7 +69,7 @@ Test-ADConnection       # Domain connectivity test
 
 **Enhanced Operations (8):**
 ```powershell
-powershellGet-DomainInfo          # Get-ADDomain equivalent
+Get-DomainInfo          # Get-ADDomain equivalent
 Get-ForestInfo          # Get-ADForest equivalent
 Get-TrustInfo           # Get-ADTrust relationships
 Get-DomainPasswordPolicy # Get-ADDefaultDomainPasswordPolicy
