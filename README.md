@@ -59,12 +59,12 @@ async def get_credentials_from_credential_manager()  # Security layer
 
 **Basic Operations (6):**
 ```powershell
-powershellCreate-User              # New-ADUser operations
+Create-User              # New-ADUser operations
 Modify-User              # Set-ADUser operations  
 Add-UserToGroup          # Add-ADGroupMember
 Remove-UserFromGroup     # Remove-ADGroupMember
-Get-UserInfo            # Get-ADUser with all properties
-Test-ADConnection       # Domain connectivity test
+Get-UserInfo             # Get-ADUser with all properties
+Test-ADConnection        # Domain connectivity test
 ```
 
 **Enhanced Operations (8):**
@@ -90,9 +90,9 @@ Get-SitesAndServices    # Sites, links, subnets
 
 **Configuration Variables:**
 ```powershell
-powershell$TargetOU = "OU=ManagedUsers,DC=demo,DC=local"  # Managed OU
+$TargetOU = "OU=ManagedUsers,DC=demo,DC=local"   # Managed OU
 $DomainName = "demo.local"                       # Domain name
-$DefaultPassword = "TempPassword123!"            # Initial password
+$DefaultPassword = "TempPassword123!"            # Initial password (this will be used if no password is supplied)
 ```
 
 
